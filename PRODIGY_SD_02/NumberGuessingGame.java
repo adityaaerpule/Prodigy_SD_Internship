@@ -1,39 +1,76 @@
-package task2;
+package PRODIGY_SD_02;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Random;
-import java.util.Scanner;
 
-public class NumberGuessingGame {
+public class NumberGuessingGameGUI extends JFrame {
+    private JTextField guessField;
+    private JLabel feedbackLabel;
+    private JLabel attemptsLabel;
+    private int randomNumber;
+    private int numberOfAttempts;
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        Random random = new Random();
+    public NumberGuessingGameGUI() {
+        setTitle("Number Guessing Game");
+        setBounds(400, 200, 400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(null);
+
+        JLabel titleLabel = new JLabel("Guess a number between 1 and 100:");
+        titleLabel.setBounds(20, 20, 300, 25);
+        add(titleLabel);
+
+        guessField = new JTextField();
+        guessField.setBounds(20, 60, 150, 25);
+        add(guessField);
+
+        JButton guessButton = new JButton("Guess");
+        guessButton.setBounds(180, 60, 80, 25);
+        add(guessButton);
+
+        feedbackLabel = new JLabel("");
+        feedbackLabel.setBounds(20, 100, 300, 25);
+        add(feedbackLabel);
+
+        attemptsLabel = new JLabel("Number of attempts: 0");
+        attemptsLabel.setBounds(20, 140, 200, 25);
+        add(attemptsLabel);
+
+        guessButton.addActionListener(new GuessButtonListener());
 
         // Generate a random number between 1 and 100
-        int randomNumber = random.nextInt(100) + 1;
-        int userGuess = 0;
-        int numberOfAttempts = 0;
+        randomNumber = new Random().nextInt(100) + 1;
+        numberOfAttempts = 0;
+    }
 
-        System.out.println("Welcome to the Number Guessing Game!");
-        System.out.println("I have selected a random number between 1 and 100.");
-        System.out.println("Can you guess what it is?");
+    private class GuessButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                int userGuess = Integer.parseInt(guessField.getText());
+                numberOfAttempts++;
 
-        // Loop until the user guesses the correct number
-        while (userGuess != randomNumber) {
-            System.out.print("Enter your guess: ");
-            userGuess = scanner.nextInt();
-            numberOfAttempts++;
+                if (userGuess < randomNumber) {
+                    feedbackLabel.setText("Too low! Try again.");
+                } else if (userGuess > randomNumber) {
+                    feedbackLabel.setText("Too high! Try again.");
+                } else {
+                    feedbackLabel.setText("Congratulations! You've guessed the number.");
+                }
 
-            if (userGuess < randomNumber) {
-                System.out.println("Too low! Try again.");
-            } else if (userGuess > randomNumber) {
-                System.out.println("Too high! Try again.");
-            } else {
-                System.out.println("Congratulations! You've guessed the number.");
-                System.out.println("It took you " + numberOfAttempts + " attempts to guess correctly.");
+                attemptsLabel.setText("Number of attempts: " + numberOfAttempts);
+            } catch (NumberFormatException ex) {
+                feedbackLabel.setText("Please enter a valid number.");
             }
         }
+    }
 
-        scanner.close();
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            NumberGuessingGameGUI game = new NumberGuessingGameGUI();
+            game.setVisible(true);
+        });
     }
 }
